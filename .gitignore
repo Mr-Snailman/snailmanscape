@@ -1,1 +1,4 @@
-config
+*.swp
+Pipfile.lock
+config/config.json
+__pycache__

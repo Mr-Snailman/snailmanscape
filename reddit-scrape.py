@@ -7,10 +7,10 @@ class RedditCommander:
     def __init__(self, reddit):
         self.reddit = reddit
 
-    def post(self, subredditStr='me_irl+dankmemes', numPosts=1, comment='This bot is made of copy pasted garbage code... Or was it?'):
+    def post(self, subredditStr='rarepuppers', numPosts=50):
         posts = self.reddit.subreddit(subredditStr).hot(limit=numPosts)
-        for submission in enumerate(posts):
-            print submission.url
+        for submission in posts:
+            print(submission.url)
 
 class ConfigService:
     def __init__(self):
@@ -28,5 +28,6 @@ def main():
         )
 
     scrapeBot = RedditCommander(reddit)
+    scrapeBot.post()
 
 main()
