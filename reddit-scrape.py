@@ -1,16 +1,35 @@
+#!/usr/bin/env python3
+
 import json
 import os
 import praw
+import shutil
 import sys
+import urllib.request
+
+localStore = "/srv/reddit/"
 
 class RedditCommander:
-    def __init__(self, reddit):
+    def __init__(self, config, reddit):
+        self.config = config
         self.reddit = reddit
 
-    def post(self, subredditStr='rarepuppers', numPosts=50):
-        posts = self.reddit.subreddit(subredditStr).hot(limit=numPosts)
-        for submission in posts:
-            print(submission.url)
+    def scrapePosts(self, numPosts=5):
+        for subredditStr in self.config["subreddits"]:
+            if not os.path.exists(localStore + subredditStr):
+                os.makedirs(localStore + subredditStr)
+
+            posts = self.reddit.subreddit(subredditStr).hot(limit=numPosts)
+            for submission in posts:
+                if "comments" not in submission.url:
+                    filename = localStore + subredditStr + "/" + submission.title.replace(" ", "").replace("/","")
+                    if not os.path.exists(filename):
+                        #with urllib.request.urlopen(submission.url) as response, open(filename, 'wb') as out_file:
+                        #    shutil.copyfileobj(response, out_file)
+                        print(submission.url)
+                        print(submission.title)
+                    else:
+                        print("Already have that one... " + filename)
 
 class ConfigService:
     def __init__(self):
@@ -27,7 +46,7 @@ def main():
         username=config["username"]
         )
 
-    scrapeBot = RedditCommander(reddit)
-    scrapeBot.post()
+    scrapeBot = RedditCommander(config, reddit)
+    scrapeBot.scrapePosts()
 
 main()
