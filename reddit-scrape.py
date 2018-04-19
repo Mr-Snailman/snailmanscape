@@ -14,7 +14,7 @@ class RedditCommander:
         self.config = config
         self.reddit = reddit
 
-    def scrapePosts(self, numPosts=5):
+    def scrapePosts(self, numPosts=25):
         for subredditStr in self.config["subreddits"]:
             if not os.path.exists(localStore + subredditStr):
                 os.makedirs(localStore + subredditStr)
@@ -22,12 +22,10 @@ class RedditCommander:
             posts = self.reddit.subreddit(subredditStr).hot(limit=numPosts)
             for submission in posts:
                 if "comments" not in submission.url:
-                    filename = localStore + subredditStr + "/" + submission.title.replace(" ", "").replace("/","")
+                    filename = localStore + subredditStr + "/" + submission.url.split('/')[-1]
                     if not os.path.exists(filename):
-                        #with urllib.request.urlopen(submission.url) as response, open(filename, 'wb') as out_file:
-                        #    shutil.copyfileobj(response, out_file)
-                        print(submission.url)
-                        print(submission.title)
+                        with urllib.request.urlopen(submission.url) as response, open(filename, 'wb') as out_file:
+                            shutil.copyfileobj(response, out_file)
                     else:
                         print("Already have that one... " + filename)
 
